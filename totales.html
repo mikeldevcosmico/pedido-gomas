@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Totales</title>
+	<!-- Importar Materialize CSS -->
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+	<style>
+    	body {
+        	padding: 20px;
+    	}
+
+    	.table-container {
+        	display: flex;
+        	justify-content: space-around;
+        	flex-wrap: wrap;
+    	}
+
+    	.table-container .col {
+        	flex: 1 1 45%;
+        	margin: 10px;
+    	}
+
+    	h2 {
+        	color: #009879;
+        	text-align: center;
+    	}
+
+    	.styled-table th {
+        	background-color: #009879;
+        	color: #ffffff;
+    	}
+
+    	.styled-table tbody tr:nth-child(even) {
+        	background-color: #f3f3f3;
+    	}
+
+    	.styled-table tbody tr:hover {
+        	background-color: #f1f1f1;
+    	}
+	</style>
+</head>
+<body>
+	<div class="container">
+    	<div class="table-container">
+        	<div class="col">
+            	<h2>Totales 40mm</h2>
+            	<div id="table40mm"></div>
+        	</div>
+        	<div class="col">
+            	<h2>Totales 32mm</h2>
+            	<div id="table32mm"></div>
+        	</div>
+    	</div>
+	</div>
+
+	<script>
+    	fetch('https://script.google.com/macros/s/AKfycbxbkYMqmzaE22UnjyShkUQ9U0xxpdpJReN78MpyI842JzIgQOslSC9XZCLPIzvkYJbtAQ/exec')
+        	.then(response => response.json())
+        	.then(data => {
+            	let output40mm = '<table class="styled-table highlight"><thead><tr><th>Producto</th><th>Cantidad</th></tr></thead><tbody>';
+            	let output32mm = '<table class="styled-table highlight"><thead><tr><th>Producto</th><th>Cantidad</th></tr></thead><tbody>';
+
+            	// Procesar los datos de 40mm
+            	data.pedido.totales["40mm"].items.forEach(item => {
+                	output40mm += `<tr><td>${item.nombre}</td><td>${item.cantidad}</td></tr>`;
+            	});
+            	output40mm += '</tbody></table>';
+
+            	// Procesar los datos de 32mm
+            	data.pedido.totales["32mm"].items.forEach(item => {
+                	output32mm += `<tr><td>${item.nombre}</td><td>${item.cantidad}</td></tr>`;
+            	});
+            	output32mm += '</tbody></table>';
+
+            	document.getElementById('table40mm').innerHTML = output40mm;
+            	document.getElementById('table32mm').innerHTML = output32mm;
+        	});
+	</script>
+	<!-- Importar Materialize JS -->
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>
+
+
+
