@@ -121,45 +121,23 @@
 
             <script>
               document.addEventListener("DOMContentLoaded", function () {
-                // Inicializar las pestañas
-                const tabs = document.querySelectorAll(".tabs a");
-                const tabContents = document.querySelectorAll(".tab-content");
-
-                tabs.forEach((tab) => {
-                  tab.addEventListener("click", function (e) {
-                    e.preventDefault();
-
-                    tabs.forEach((t) => t.classList.remove("active"));
-                    tabContents.forEach((tc) => tc.classList.remove("active"));
-
-                    document
-                      .querySelector(tab.getAttribute("href"))
-                      .classList.add("active");
-                    tab.classList.add("active");
-                  });
-                });
-
-                // Inicializar el select de Materialize
                 const selectElems = document.querySelectorAll("select");
                 M.FormSelect.init(selectElems);
 
-                // URL del Google Sheet publicado como JSON
-                const sheetURL =
-                  "https://spreadsheets.google.com/feeds/list/1WkwbzfnvP4EDC2BBETm5kvoEv4JPrzfOa8ThHgPDuxQ/od6/public/values?alt=json";
+                const apiURL =
+                  "https://script.google.com/macros/s/AKfycbxbkYMqmzaE22UnjyShkUQ9U0xxpdpJReN78MpyI842JzIgQOslSC9XZCLPIzvkYJbtAQ/exec?sheet=Individuales";
 
-                // Función para obtener datos del Google Sheet
-                fetch(sheetURL)
+                fetch(apiURL)
                   .then((response) => response.json())
                   .then((data) => {
-                    const entries = data.feed.entry;
                     const userSelect = document.getElementById("user-select");
                     const userContentContainer = document.getElementById(
                       "user-content-container"
                     );
 
-                    entries.forEach((entry) => {
-                      const userName = entry["gsx$usuario"].$t; // Nombre del usuario
-                      const userContent = entry["gsx$contenido"].$t; // Contenido del usuario
+                    data.forEach((entry) => {
+                      const userName = entry["usuario"];
+                      const userContent = entry["contenido"];
 
                       // Crear una opción en el desplegable
                       const option = document.createElement("option");
@@ -178,18 +156,15 @@
                     // Actualizar el select de Materialize
                     M.FormSelect.init(userSelect);
 
-                    // Filtrar contenido por usuario
                     userSelect.addEventListener("change", function () {
                       const selectedUser = this.value;
 
-                      // Ocultar todos los contenidos de usuario
                       document
                         .querySelectorAll(".user-content")
                         .forEach((content) =>
                           content.classList.remove("active")
                         );
 
-                      // Mostrar el contenido del usuario seleccionado
                       if (selectedUser) {
                         document
                           .getElementById(selectedUser)
