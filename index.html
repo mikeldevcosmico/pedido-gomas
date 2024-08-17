@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualización de Datos</title>
+    <!-- Importar Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .tabs-container {
+            margin: 20px;
+        }
+
+        .tabs {
+            margin-bottom: 20px;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .tab-content iframe {
+            width: 100%;
+            height: 600px;
+            border: none;
+        }
+
+        .tab-content h2 {
+            text-align: center;
+            color: #009879;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container tabs-container">
+        <ul class="tabs">
+            <li class="tab col s3"><a href="#totales" class="active">Totales</a></li>
+            <li class="tab col s3"><a href="#individuales">Individuales</a></li>
+        </ul>
+
+        <div id="totales" class="tab-content active">
+            <h2>Totales</h2>
+            <iframe src="https://docs.google.com/document/d/1SU4lBC3uN4pb96JfGCH-FEiS4eod7yepfYoNX2msKyM/preview" allowfullscreen></iframe>
+        </div>
+
+        <div id="individuales" class="tab-content">
+            <h2>Individuales</h2>
+            <iframe src="https://docs.google.com/document/d/1JCj1U7mkHO6G6mK6Xq7GrmS22Em-dqNt28GGA-5EvYg/preview" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <!-- Importar Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tabs a');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabs.forEach(tab => {
+                tab.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(tc => tc.classList.remove('active'));
+                    
+                    document.querySelector(tab.getAttribute('href')).classList.add('active');
+                    tab.classList.add('active');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
