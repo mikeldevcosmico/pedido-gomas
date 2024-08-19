@@ -54,39 +54,57 @@
                         userSelect.appendChild(option);
 
                         // Crear una tabla para cada usuario
-                        const userDiv = document.createElement('div');
-                        userDiv.id = userName.toLowerCase();
-                        userDiv.className = 'user-content';
+Object.keys(data).forEach(userName => {
+    const userDiv = document.createElement('div');
+    userDiv.id = userName.toLowerCase();
+    userDiv.className = 'user-content';
 
-                        let tableHTML = `
-                            <h3>Pedidos de ${userName}</h3>
-                            <table class="striped">
-                                <thead>
-                                    <tr>
-                                        <th>Medida</th>
-                                        <th>Nombre</th>
-                                        <th>Cantidad</th>
-                                        <th>Precio</>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                        `;
+    let totalAmount = 0;
 
-                        data[userName].forEach(item => {
-                            tableHTML += `
-                                <tr>
-                                    <td>${item['Medida']}</td>
-                                    <td>${item['Nombre']}</td>
-                                    <td>${item['Cantidad']}</td>
-                                    <td>${item['Precio']}</td>
-                                </tr>
-                            `;
-                        });
+    let tableHTML = `
+        <h3>Pedidos de ${userName} (Total: £<span id="total-${userName.toLowerCase()}"></span>)</h3>
+        <table class="striped">
+            <thead>
+                <tr>
+                    <th>Medida</th>
+                    <th>Nombre</th>
+                    <th>Cantidad</th>
+                    <th>Precio (£)</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
 
-                        tableHTML += `</tbody></table>`;
-                        userDiv.innerHTML = tableHTML;
-                        userContentContainer.appendChild(userDiv);
-                    });
+    data[userName].forEach(item => {
+        const quantity = item['Cantidad'];
+        const price = item['Precio'];
+        let itemTotal = quantity * price;
+
+        // Manejo del caso cuando el precio es 0
+        let displayPrice = itemTotal === 0 
+            ? `<span style="color: red;">No Disponible</span>` 
+            : `£${itemTotal.toFixed(2)}`;
+
+        // Sumar al total del pedido del usuario
+        totalAmount += itemTotal;
+
+        tableHTML += `
+            <tr>
+                <td>${item['Medida']}</td>
+                <td>${item['Nombre']}</td>
+                <td>${quantity}</td>
+                <td>${displayPrice}</td>
+            </tr>
+        `;
+    });
+
+    tableHTML += `</tbody></table>`;
+    userDiv.innerHTML = tableHTML;
+    userContentContainer.appendChild(userDiv);
+
+    // Mostrar el total del pedido en la cabecera
+    document.getElementById(`total-${userName.toLowerCase()}`).innerText = totalAmount.toFixed(2);
+});
 
                     // Actualizar el select de Materialize
                     M.FormSelect.init(userSelect);
