@@ -33,97 +33,97 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Inicializar el select de Materialize
-            const selectElems = document.querySelectorAll('select');
-            M.FormSelect.init(selectElems);
+    // Inicializar el select de Materialize
+    const selectElems = document.querySelectorAll('select');
+    M.FormSelect.init(selectElems);
 
-            // URL del Google Apps Script que devuelve la información
-            const apiURL = 'https://script.google.com/macros/s/AKfycbxbkYMqmzaE22UnjyShkUQ9U0xxpdpJReN78MpyI842JzIgQOslSC9XZCLPIzvkYJbtAQ/exec';
+    // URL del Google Apps Script que devuelve la información
+    const apiURL = 'https://script.google.com/macros/s/AKfycbxbkYMqmzaE22UnjyShkUQ9U0xxpdpJReN78MpyI842JzIgQOslSC9XZCLPIzvkYJbtAQ/exec';
 
-            fetch(apiURL)
-                .then(response => response.json())
-                .then(data => {
-                    const userSelect = document.getElementById('user-select');
-                    const userContentContainer = document.getElementById('user-content-container');
+    fetch(apiURL)
+        .then(response => response.json())
+        .then(data => {
+            const userSelect = document.getElementById('user-select');
+            const userContentContainer = document.getElementById('user-content-container');
 
-                    // Añadir las opciones al desplegable
-                    Object.keys(data).forEach(userName => {
-                        const option = document.createElement('option');
-                        option.value = userName.toLowerCase();
-                        option.textContent = userName;
-                        userSelect.appendChild(option);
+            // Añadir las opciones al desplegable y crear una tabla para cada usuario
+            Object.keys(data).forEach(userName => {
+                const option = document.createElement('option');
+                option.value = userName.toLowerCase();
+                option.textContent = userName;
+                userSelect.appendChild(option);
 
-                        // Crear una tabla para cada usuario
-Object.keys(data).forEach(userName => {
-    const userDiv = document.createElement('div');
-    userDiv.id = userName.toLowerCase();
-    userDiv.className = 'user-content';
+                // Crear una tabla para cada usuario
+                const userDiv = document.createElement('div');
+                userDiv.id = userName.toLowerCase();
+                userDiv.className = 'user-content';
 
-    let totalAmount = 0;
+                let totalAmount = 0;
 
-    let tableHTML = `
-        <h3>Pedidos de ${userName} (Total: £<span id="total-${userName.toLowerCase()}"></span>)</h3>
-        <table class="striped">
-            <thead>
-                <tr>
-                    <th>Medida</th>
-                    <th>Nombre</th>
-                    <th>Cantidad</th>
-                    <th>Precio (£)</th>
-                </tr>
-            </thead>
-            <tbody>
-    `;
+                let tableHTML = `
+                    <h3>Pedidos de ${userName} (Total: £<span id="total-${userName.toLowerCase()}"></span>)</h3>
+                    <table class="striped">
+                        <thead>
+                            <tr>
+                                <th>Medida</th>
+                                <th>Nombre</th>
+                                <th>Cantidad</th>
+                                <th>Precio (£)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
 
-    data[userName].forEach(item => {
-        const quantity = item['Cantidad'];
-        const price = item['Precio'];
-        let itemTotal = quantity * price;
+                data[userName].forEach(item => {
+                    const quantity = item['Cantidad'];
+                    const price = item['Precio'];
+                    let itemTotal = quantity * price;
 
-        // Manejo del caso cuando el precio es 0
-        let displayPrice = itemTotal === 0 
-            ? `<span style="color: red;">No Disponible</span>` 
-            : `£${itemTotal.toFixed(2)}`;
+                    // Manejo del caso cuando el precio es 0
+                    let displayPrice = itemTotal === 0 
+                        ? `<span style="color: red;">No Disponible</span>` 
+                        : `£${itemTotal.toFixed(2)}`;
 
-        // Sumar al total del pedido del usuario
-        totalAmount += itemTotal;
+                    // Sumar al total del pedido del usuario
+                    totalAmount += itemTotal;
 
-        tableHTML += `
-            <tr>
-                <td>${item['Medida']}</td>
-                <td>${item['Nombre']}</td>
-                <td>${quantity}</td>
-                <td>${displayPrice}</td>
-            </tr>
-        `;
-    });
+                    tableHTML += `
+                        <tr>
+                            <td>${item['Medida']}</td>
+                            <td>${item['Nombre']}</td>
+                            <td>${quantity}</td>
+                            <td>${displayPrice}</td>
+                        </tr>
+                    `;
+                });
 
-    tableHTML += `</tbody></table>`;
-    userDiv.innerHTML = tableHTML;
-    userContentContainer.appendChild(userDiv);
+                tableHTML += `</tbody></table>`;
+                userDiv.innerHTML = tableHTML;
+                userContentContainer.appendChild(userDiv);
 
-    // Mostrar el total del pedido en la cabecera
-    document.getElementById(`total-${userName.toLowerCase()}`).innerText = totalAmount.toFixed(2);
+                // Mostrar el total del pedido en la cabecera
+                document.getElementById(`total-${userName.toLowerCase()}`).innerText = totalAmount.toFixed(2);
+            });
+
+            // Actualizar el select de Materialize después de añadir opciones
+            M.FormSelect.init(userSelect);
+
+            // Mostrar contenido según la selección del usuario
+            userSelect.addEventListener('change', function() {
+                const selectedUser = this.value;
+
+                // Ocultar todos los contenidos de usuario
+                document.querySelectorAll('.user-content').forEach(content => content.classList.remove('active'));
+
+                // Mostrar el contenido del usuario seleccionado
+                if (selectedUser) {
+                    document.getElementById(selectedUser).classList.add('active');
+                }
+            });
+        })
+        .catch(error => console.error('Error al obtener los datos:', error));
 });
 
-                    // Actualizar el select de Materialize
-                    M.FormSelect.init(userSelect);
-
-                    // Mostrar contenido según la selección del usuario
-                    userSelect.addEventListener('change', function() {
-                        const selectedUser = this.value;
-
-                        // Ocultar todos los contenidos de usuario
-                        document.querySelectorAll('.user-content').forEach(content => content.classList.remove('active'));
-
-                        // Mostrar el contenido del usuario seleccionado
-                        if (selectedUser) {
-                            document.getElementById(selectedUser).classList.add('active');
-                        }
-                    });
-                })
-                .catch(error => console.error('Error al obtener los datos:', error));
-        });
     </script>
 </body>
 </html>
